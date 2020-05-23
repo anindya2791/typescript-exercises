@@ -39,7 +39,6 @@ interface User {
     age: number;
     occupation: string;
 }
-
 interface Admin {
     type: 'admin';
     name: string;
@@ -63,12 +62,16 @@ function logPerson(person: Person) {
         ` - ${chalk.green(person.name)}, ${person.age}, ${person.type === 'admin' ? person.role : person.occupation}`
     );
 }
-
-function filterPersons(persons: Person[], personType: string, criteria: unknown): unknown[] {
+function getCriteriaKeys<T>(criterias: T) {
+    return Object.keys(criterias) as Array<keyof T>
+}
+function filterPersons(persons: Person[], personType: User['type'], criteria: Partial<User>): User[]
+function filterPersons(persons: Person[], personType: Admin['type'], criteria: Partial<Admin>): Admin[]
+function filterPersons(persons: Person[], personType: User['type'] | Admin['type'], criteria: Partial<Person>): Person[] {
     return persons
         .filter((person) => person.type === personType)
         .filter((person) => {
-            let criteriaKeys = Object.keys(criteria) as (keyof Person)[];
+            let criteriaKeys = getCriteriaKeys(criteria);
             return criteriaKeys.every((fieldName) => {
                 return person[fieldName] === criteria[fieldName];
             });

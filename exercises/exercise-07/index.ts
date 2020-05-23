@@ -41,7 +41,8 @@ interface Admin {
     role: string;
 }
 
-type PowerUser = unknown;
+type a = Omit<User, 'type'> & Omit<Admin, 'type'>;
+type PowerUser = a & {type: 'powerUser'};
 
 type Person = User | Admin | PowerUser;
 
